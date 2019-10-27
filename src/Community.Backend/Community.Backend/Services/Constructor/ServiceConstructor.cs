@@ -20,7 +20,7 @@ namespace Community.Backend.Services.Constructor
         /// <typeparam name="Tservice">interface del servicio que implementa IServicioBase<Tmodel> del cual se desea obtener una nueva instancia del mismo</typeparam>
         /// <typeparam name="Tmodel">modelo del cual se ha creado el servicio a inicializar</typeparam>
         /// <returns>Retorna el servicio del cual se ha hecho solicitud de una nueva instancia</returns>
-        Tservice GetServicio<Tservice, Tmodel>() where Tservice : IBaseService<Tmodel> where Tmodel : class, IBaseModel;
+        Tservice GetService<Tservice, Tmodel>() where Tservice : IBaseService<Tmodel> where Tmodel : class, IBaseModel;
     }
     public class ServiceConstructor : IServiceConstructor
     {
@@ -34,7 +34,7 @@ namespace Community.Backend.Services.Constructor
             Constructor = _constructor;
         }
 
-        Tservice IServiceConstructor.GetServicio<Tservice, Tmodel>()
+        Tservice IServiceConstructor.GetService<Tservice, Tmodel>()
         {
             Type tConcreteService = null;
             Assembly.GetExecutingAssembly().GetTypes().ToList().ForEach(t =>

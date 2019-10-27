@@ -12,24 +12,24 @@ namespace Community.Backend.Database.Repositories.Base
 {
     public interface IBaseRepository<Tmodel> where Tmodel :class,IBaseModel
     {
-        Task<int> CommitChanges();
-        Task<Tmodel> GetById(object id);
-        Task<IQueryable<Tmodel>> Get(Expression<Func<Tmodel, bool>> where, string includeProperties = "");
-        Task<IQueryable<Tmodel>> Get(Expression<Func<Tmodel, bool>> where, params Expression<Func<Tmodel, object>>[] include);
-        Task<IQueryable<Tmodel>> Get(params Expression<Func<Tmodel, object>>[] include);
-        Task<IQueryable<Tmodel>> GetAll();
-        Task<int> Count();
-        Task<Tmodel> Insert(Tmodel entity);
-        Task<Tmodel> Update(Tmodel entity);
-        Task<Tmodel> Update(Tmodel entity, object id);
-        Task UpdateProperty<Type>(Expression<Func<Tmodel, Type>> property, Tmodel entity);
-        Task Delete(Tmodel Entity);
-        Task Delete(object id);
-        Task Delete(Expression<Func<Tmodel, bool>> primaryKeys);
-        Task<SqlDataReader> Run(string query);
-        Task DeleteRange(IEnumerable<Tmodel> entities);
-        Task<IEnumerable<Tmodel>> InsertRange(IEnumerable<Tmodel> entities);
-        Task<IEnumerable<Tmodel>> UpdateRange(IEnumerable<Tmodel> entities);
+        Task<int> CommitChangesAsync();
+        Task<Tmodel> GetByIDAsync(object id);
+        Task<IQueryable<Tmodel>> GetAsync(Expression<Func<Tmodel, bool>> where, string includeProperties = "");
+        Task<IQueryable<Tmodel>> GetAsync(Expression<Func<Tmodel, bool>> where, params Expression<Func<Tmodel, object>>[] include);
+        Task<IQueryable<Tmodel>> GetAsync(params Expression<Func<Tmodel, object>>[] include);
+        Task<IQueryable<Tmodel>> GetAllAsync();
+        Task<int> CountAsync();
+        Task<Tmodel> InsertAsync(Tmodel entity);
+        Task<Tmodel> UpdateAsync(Tmodel entity);
+        Task<Tmodel> UpdateAsync(Tmodel entity, object id);
+        Task UpdatePropertyAsync<Type>(Expression<Func<Tmodel, Type>> property, Tmodel entity);
+        Task DeleteAsync(Tmodel Entity);
+        Task DeleteAsync(object id);
+        Task DeleteAsync(Expression<Func<Tmodel, bool>> primaryKeys);
+        Task<SqlDataReader> RunAsync(string query);
+        Task DeleteRangeAsync(IEnumerable<Tmodel> entities);
+        Task<IEnumerable<Tmodel>> InsertRangeAsync(IEnumerable<Tmodel> entities);
+        Task<IEnumerable<Tmodel>> UpdateRangeAsync(IEnumerable<Tmodel> entities);
     }
     public class BaseRepository<Tmodel>:IBaseRepository<Tmodel> where Tmodel:class,IBaseModel
     {
@@ -40,17 +40,17 @@ namespace Community.Backend.Database.Repositories.Base
             Context = context;
         }
 
-        public async Task<int> CommitChanges()
+        public async Task<int> CommitChangesAsync()
         {
             return await Context.SaveChangesAsync();
         }
 
-        public virtual async Task<Tmodel> GetById(object id)
+        public virtual async Task<Tmodel> GetByIDAsync(object id)
         {
             return await Context.Set<Tmodel>().FindAsync(id);
         }
 
-        public virtual async Task<IQueryable<Tmodel>> Get(Expression<Func<Tmodel, bool>> where, string includeProperties = "")
+        public virtual async Task<IQueryable<Tmodel>> GetAsync(Expression<Func<Tmodel, bool>> where, string includeProperties = "")
         {
             return await Task.Run(()=> {
                 var query = Context.Set<Tmodel>().AsQueryable();
@@ -67,7 +67,7 @@ namespace Community.Backend.Database.Repositories.Base
             });
         }
 
-        public virtual async Task<IQueryable<Tmodel>> Get(Expression<Func<Tmodel, bool>> @where, params Expression<Func<Tmodel, object>>[] include)
+        public virtual async Task<IQueryable<Tmodel>> GetAsync(Expression<Func<Tmodel, bool>> @where, params Expression<Func<Tmodel, object>>[] include)
         {
             return await Task.Run(() =>
             {
@@ -85,7 +85,7 @@ namespace Community.Backend.Database.Repositories.Base
             });
         }
 
-        public virtual async Task<IQueryable<Tmodel>> Get(params Expression<Func<Tmodel, object>>[] include)
+        public virtual async Task<IQueryable<Tmodel>> GetAsync(params Expression<Func<Tmodel, object>>[] include)
         {
             return await Task.Run(() =>
             {
@@ -100,29 +100,29 @@ namespace Community.Backend.Database.Repositories.Base
             });
         }
 
-        public virtual async Task<IQueryable<Tmodel>> GetAll()
+        public virtual async Task<IQueryable<Tmodel>> GetAllAsync()
         {
             return await Task.Run(() => Context.Set<Tmodel>().AsQueryable());
         }
 
-        public virtual async Task<int> Count()
+        public virtual async Task<int> CountAsync()
         {
             return await Task.Run(()=> Context.Set<Tmodel>().Count());
         }
 
-        public virtual async Task<Tmodel> Insert(Tmodel entity)
+        public virtual async Task<Tmodel> InsertAsync(Tmodel entity)
         {
             await Context.Set<Tmodel>().AddAsync(entity);
             return entity;
         }
 
-        public virtual async Task<IEnumerable<Tmodel>> InsertRange(IEnumerable<Tmodel> entity)
+        public virtual async Task<IEnumerable<Tmodel>> InsertRangeAsync(IEnumerable<Tmodel> entity)
         {
             await Context.Set<Tmodel>().AddRangeAsync(entity);
             return entity;
         }
 
-        public virtual async Task<Tmodel> Update(Tmodel entity)
+        public virtual async Task<Tmodel> UpdateAsync(Tmodel entity)
         {
             return await Task.Run(() =>
             {
@@ -133,13 +133,13 @@ namespace Community.Backend.Database.Repositories.Base
             });
         }
 
-        public virtual async Task<Tmodel> Update(Tmodel entity, object id)
+        public virtual async Task<Tmodel> UpdateAsync(Tmodel entity, object id)
         {
             var entry = Context.Entry(entity);
 
             if (entry.State == EntityState.Detached)
             {
-                var attachedEntity = await GetById(id);
+                var attachedEntity = await GetByIDAsync(id);
 
                 if (attachedEntity != null)
                 {
@@ -154,7 +154,7 @@ namespace Community.Backend.Database.Repositories.Base
             return entity;
         }
 
-        public virtual async Task<IEnumerable<Tmodel>> UpdateRange(IEnumerable<Tmodel> entities){
+        public virtual async Task<IEnumerable<Tmodel>> UpdateRangeAsync(IEnumerable<Tmodel> entities){
                 return await Task.Run(()=>{
                     var result = new List<Tmodel>();
                 foreach(var entity in entities){
@@ -166,43 +166,43 @@ namespace Community.Backend.Database.Repositories.Base
                 });
         }
 
-        public virtual async Task UpdateProperty<Type>(Expression<Func<Tmodel, Type>> property, Tmodel entity)
+        public virtual async Task UpdatePropertyAsync<Type>(Expression<Func<Tmodel, Type>> property, Tmodel entity)
         {
             Context.Set<Tmodel>().Attach(entity);
             Context.Entry(entity).Property(property).IsModified = true;
             await Context.SaveChangesAsync();
         }
 
-        public virtual async Task Delete(Tmodel entity)
+        public virtual async Task DeleteAsync(Tmodel entity)
         {
             await Task.Run(() => Context.Set<Tmodel>().Remove(entity));
         }
 
-        public virtual async Task DeleteRange(IEnumerable<Tmodel> entity)
+        public virtual async Task DeleteRangeAsync(IEnumerable<Tmodel> entity)
         {
             await Task.Run(()=> Context.Set<Tmodel>().RemoveRange(entity));
         }
 
 
-        public virtual async Task Delete(object id)
+        public virtual async Task DeleteAsync(object id)
         {
-            var entity = await GetById(id);
-            await Delete(entity);
+            var entity = await GetByIDAsync(id);
+            await DeleteAsync(entity);
         }
 
-        public virtual async Task Delete(Expression<Func<Tmodel, bool>> primaryKeys)
+        public virtual async Task DeleteAsync(Expression<Func<Tmodel, bool>> primaryKeys)
         {
-            var entity = (await Get(primaryKeys)).FirstOrDefault();
-            await Delete(entity);
+            var entity = (await GetAsync(primaryKeys)).FirstOrDefault();
+            await DeleteAsync(entity);
         }
 
-        public virtual async Task<SqlDataReader> Run(string query)
+        public virtual async Task<SqlDataReader> RunAsync(string query)
         {
             var connection = Context.Database.GetDbConnection();
 
             SqlConnection conn = new SqlConnection(connection.ConnectionString);
 
-            SqlCommand command = new SqlCommand(query, conn);
+            using SqlCommand command = new SqlCommand(query, conn);
             await conn.OpenAsync();
 
             return await command.ExecuteReaderAsync();

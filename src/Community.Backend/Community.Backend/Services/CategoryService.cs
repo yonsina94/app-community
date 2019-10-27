@@ -2,11 +2,8 @@
 using Community.Backend.Services.Base;
 using Community.Backend.Services.Infraestructure;
 using Comunity.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace Community.Backend.Services
 {
@@ -21,9 +18,9 @@ namespace Community.Backend.Services
         {
         }
 
-        public override async Task<Result> ValidateOnCreate(Category entity)
+        public override async Task<Result> ValidateOnCreateAsync(Category entity)
         {
-            var result = await Repository.Get(c => c.Name == entity.Name);
+            var result = await Repository.GetAsync(c => c.Name == entity.Name || c.ShortName == entity.ShortName);
             if (result.Any())
             {
                 return Result.AddErrorMessage("Data exist in database");
@@ -34,19 +31,43 @@ namespace Community.Backend.Services
             }
         }
 
-        public override Task<Result> ValidateOnDelete(Category entity)
+        public async override Task<Result> ValidateOnDeleteAsync(Category entity)
         {
-            throw new NotImplementedException();
+            var result = await Repository.GetByIDAsync(entity.ID);
+            if (result == null)
+            {
+                return Result.AddErrorMessage("this category not exist in the database");
+            }
+            else
+            {
+                return Result;
+            }
         }
 
-        public override Task<Result> ValidateOnDelete(object id)
+        public async override Task<Result> ValidateOnDeleteAsync(object id)
         {
-            throw new NotImplementedException();
+            var result = await Repository.GetByIDAsync(id);
+            if (result == null)
+            {
+                return Result.AddErrorMessage("this category not exist in the database");
+            }
+            else
+            {
+                return Result;
+            }
         }
 
-        public override Task<Result> ValidateOnUpdate(Category entity)
+        public async override Task<Result> ValidateOnUpdateAsync(Category entity)
         {
-            throw new NotImplementedException();
+            var result = await Repository.GetByIDAsync(entity.ID);
+            if (result == null)
+            {
+                return Result.AddErrorMessage("this category not exist in the database");
+            }
+            else
+            {
+                return Result;
+            }
         }
     }
 }
